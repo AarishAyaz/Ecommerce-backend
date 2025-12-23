@@ -7,25 +7,54 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 
-
 dotenv.config();
 connectDB();
 
 const app = express();
 
-app.use(cors({origin:["http://localhost:5173",
-"https://ecommerce-frontend-swart-ten.vercel.app/login"], credentials:true }));
+/* =========================
+   CORS CONFIG
+========================= */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ecommerce-frontend-swart-ten.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+// Handle preflight requests
+app.options("*", cors());
+
 app.use(express.json());
 app.use(morgan("dev"));
 
-// Routes
+/* =========================
+   ROUTES
+========================= */
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-// app.use("/api/categories", categoryRoutes);
-// app.use("/api/orders", orderRoutes);
 
-app.get("/", (req, res) => res.send("Ecommerce API Running..."));
+app.get("/", (req, res) => {
+  res.send("Ecommerce API Running...");
+});
 
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}`)
+/* =========================
+   SERVER
+========================= */
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
 );
