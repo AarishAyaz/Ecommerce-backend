@@ -13,7 +13,8 @@ connectDB();
 
 const app = express();
 
-app.use(cors({origin:"http://localhost:5173"}));
+app.use(cors({origin:["http://localhost:5173",
+"https://ecommerce-frontend-swart-ten.vercel.app/login"], credentials:true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
