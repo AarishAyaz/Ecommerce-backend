@@ -7,38 +7,25 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 
+
 dotenv.config();
 connectDB();
 
 const app = express();
 
-console.log("🚀 BACKEND STARTED – CORS ENABLED");
-
-/* =========================
-   CORS (TEMP: ALLOW ALL)
-========================= */
-app.use(cors());
-
-// IMPORTANT: use "/*" NOT "*"
-app.options("/*", cors());
-
+app.use(cors({origin:
+"https://ecommerce-frontend-swart-ten.vercel.app/login", credentials:true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
-/* =========================
-   ROUTES
-========================= */
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+// app.use("/api/categories", categoryRoutes);
+// app.use("/api/orders", orderRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Ecommerce API Running...");
-});
+app.get("/", (req, res) => res.send("Ecommerce API Running..."));
 
-/* =========================
-   SERVER
-========================= */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(process.env.PORT, () =>
+  console.log(`Server running on port ${process.env.PORT}`)
+);
