@@ -14,7 +14,7 @@ connectDB();
 const app = express();
 
 app.use(cors({origin:
-"https://ecommerce-frontend-swart-ten.vercel.app/login", credentials:true }));
+"https://ecommerce-frontend-swart-ten.vercel.app", credentials:true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
