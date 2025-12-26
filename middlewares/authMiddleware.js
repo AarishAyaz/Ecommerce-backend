@@ -1,38 +1,52 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 // Protect middleware
-export const protect = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+export const protect = async (req, res, next) => {
+  let token;
 
-  // FIX: must check "Bearer " with space
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+      // Fetch fresh user from DB
+      req.user = await User.findById(decoded.id).select("-password");
+
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      next();
+    } catch (error) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token",
+      });
+    }
+  } else {
     return res.status(401).json({
       success: false,
       message: "No token, unauthorized",
-    });
-  }
-
-  try {
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    req.user = decoded; // { id, isAdmin }
-    next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid token",
     });
   }
 };
 
 // Admin middleware
 export const admin = (req, res, next) => {
-  if (!req.user || !req.user.isAdmin) {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
     return res.status(403).json({
       success: false,
       message: "Admin only",
     });
   }
-  next();
 };
