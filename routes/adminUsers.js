@@ -18,7 +18,7 @@ router.get("/", protect, admin, async (req, res) => {
 })
 
 //add a user
-router.post("/", admin, async(req,res)=>{
+router.post("/", protect, admin, async(req,res)=>{
     const {name, email, password, isAdmin} = req.body;
 
     const exists = await User.findOne({email});
@@ -26,7 +26,7 @@ router.post("/", admin, async(req,res)=>{
         return res.status(400).json({message: "User already exists"});
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User.create({
+    const user = await User.create({
         name,
         email,
         password: hashedPassword,

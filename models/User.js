@@ -17,7 +17,9 @@ const userSchema = new mongoose.Schema({
     isAdmin:{
         type: Boolean,
         default:false
-    }
+    },
+    forgotPasswordOTP: String,
+    forgotPasswordExpires: Date
 }, {timestamps : true})
 
 export default mongoose.model ("User", userSchema)
