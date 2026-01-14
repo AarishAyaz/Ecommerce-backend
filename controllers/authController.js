@@ -57,7 +57,7 @@ export const login = async (req, res) => {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     );
     res.json({
       success: true,
