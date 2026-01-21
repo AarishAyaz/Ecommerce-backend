@@ -9,7 +9,8 @@ import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import adminUserRoutes from "./routes/adminUsers.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
-import articleRoutes from "./routes/articleRoutes.js"
+import articleRoutes from "./routes/articleRoutes.js";
+import statsRoutes from "./routes/statsRoutes.js";
 
 
 dotenv.config();
@@ -37,6 +38,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes); // ✅ ADD THIS LINE
 app.use("/api/categories", categoryRoutes);
 app.use("/api/articles", articleRoutes)
+app.use("/api/stats", statsRoutes);
 // app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => res.send("Ecommerce API Running..."));
