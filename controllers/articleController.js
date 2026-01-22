@@ -30,6 +30,8 @@ export const updateArticle = async (req, res) => {
     article.content = req.body.content || article.content;
     article.image = req.body.image || article.image;
     article.author = req.body.author || article.author;
+    article.category = req.body.category || article.category;
+    article.published = Date.now();
 
     const updatedArticle = await article.save();
 

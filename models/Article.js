@@ -16,6 +16,13 @@ const articleSchema = new mongoose.Schema(
         published:{
             type: Boolean,
             default: true
+        },
+        category:{
+            type: String
+        },
+        createdAt:{
+            type: Date,
+            default: Date.now
         }
     }
 )
