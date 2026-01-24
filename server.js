@@ -1,6 +1,5 @@
 import express from "express";
 import "dotenv/config";
-
 import cors from "cors";
 import morgan from "morgan";
 import connectDB from "./config/db.js";
@@ -12,8 +11,8 @@ import adminUserRoutes from "./routes/adminUsers.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import articleRoutes from "./routes/articleRoutes.js";
 import statsRoutes from "./routes/statsRoutes.js";
-
-
+import path from "path";
+import { fileURLToPath } from "url";
 
 connectDB();
 
@@ -30,6 +29,11 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan("dev"));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+console.log("Uploads dir:", path.join(__dirname, "uploads"));
 
 // Routes
 app.use("/api/admin/users", adminUserRoutes);
@@ -40,6 +44,7 @@ app.use("/api/users", userRoutes); // ✅ ADD THIS LINE
 app.use("/api/categories", categoryRoutes);
 app.use("/api/articles", articleRoutes)
 app.use("/api/stats", statsRoutes);
+
 // app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => res.send("Ecommerce API Running..."));

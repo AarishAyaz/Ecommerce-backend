@@ -1,8 +1,16 @@
 import Product from "../models/Product.js";
 
 export const createProduct = async (req,res)=>{
-    const product = await Product.create(req.body);
-    res.status(200).json(product);
+    try {
+        const product = await Product.create({
+            ...req.body,
+            image: req.file.filename
+        });
+        res.status(201).json(product);
+
+    } catch (error) {
+        res.status(500).json({message:"Server Error"});        
+    }
 }
 
 export const getProducts = async (req, res) => {
@@ -29,12 +37,38 @@ export const getProduct = async (req, res)=>{
     res.json(product)
 }
 
-export const updateProduct = async (req, res)=>{
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body,{
-        new:true
-    });
-    res.json(updated)
-}
+export const updateProduct = async (req, res) => {
+  try {
+    // req.body will always be an object, even with multipart/form-data
+    const body = req.body || {};
+
+    // Find the product first
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Update fields only if they exist
+    if (body.name) product.name = body.name;
+    if (body.price) product.price = Number(body.price);
+    if (body.description) product.description = body.description;
+    if (body.category) product.category = body.category;
+    if (body.brand) product.brand = body.brand;
+    if (body.countInStock) product.countInStock = Number(body.countInStock);
+
+    // Handle image
+    if (req.file) {
+      product.image = req.file.filename;
+    }
+
+    const updatedProduct = await product.save();
+
+    res.json(updatedProduct);
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({ message: error.message || "Server error" });
+  }
+};
+
+
 
 export const deleteProduct = async (req, res)=>{
     const deleted = await Product.findByIdAndDelete(req.params.id);
