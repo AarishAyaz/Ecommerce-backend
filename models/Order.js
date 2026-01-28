@@ -1,21 +1,16 @@
-import mongoose from 'mongoose'
-import Product from './Product'
+import mongoose from "mongoose";
 
-const OrderSChema = new mongoose.Schema({
-    user:{
-        type: mongoose.Schema.Types.ObjectId, ref:"User"
-    },
-    items:[
-        {
-            Product:{type:mongoose.Schema.Types.ObjectId, ref:"Product"},
-            quantity: Number
-        },
-    ],
-    totalPrice: Number,
-    status:{
-        type:String,
-        default: Pending
+const orderSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  items: [
+    {
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      quantity: Number,
+      price: Number
     }
-}, {timestamps:true})
+  ],
+  totalAmount: Number,
+  status: { type: String, default: "Pending" }
+}, { timestamps: true });
 
-export default mongoose.model ("Order", OrderSChema)
+export default mongoose.model("Order", orderSchema);

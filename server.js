@@ -13,6 +13,8 @@ import articleRoutes from "./routes/articleRoutes.js";
 import statsRoutes from "./routes/statsRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import orderRoutes from "./routes/orderRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 
 connectDB();
 
@@ -44,9 +46,8 @@ app.use("/api/users", userRoutes); // ✅ ADD THIS LINE
 app.use("/api/categories", categoryRoutes);
 app.use("/api/articles", articleRoutes)
 app.use("/api/stats", statsRoutes);
-
-// app.use("/api/orders", orderRoutes);
-
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
 app.get("/", (req, res) => res.send("Ecommerce API Running..."));
 
 app.listen(process.env.PORT, () =>
