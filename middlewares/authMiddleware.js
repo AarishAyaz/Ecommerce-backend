@@ -26,6 +26,7 @@ export const protect = async (req, res, next) => {
 
       next();
     } catch (error) {
+      console.error("Token verification failed:", error);
       return res.status(401).json({
         success: false,
         message: "Invalid token",
