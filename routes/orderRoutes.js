@@ -5,6 +5,24 @@ import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+router.get("/:id", protect, async (req, res) => {
+  const order = await Order.findOne({
+    _id: req.params.id,
+    user: req.user.id
+  }).populate("items.product", "name price");
+
+  if (!order) {
+    return res.status(404).json({ message: "Order not found" });
+  }
+
+  res.json(order);
+});
+
+router.get("/", protect, async (req,res)=>{
+  const orders = await Order.find({user: req.user.id}).sort({createdAt: -1});
+  res.json(orders);
+})
+
 router.post("/", protect, async (req, res) => {
   const cart = await Cart.findOne({ user: req.user.id }).populate("items.product");
   if (!cart || cart.items.length === 0)
