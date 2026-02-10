@@ -9,8 +9,8 @@ export const createCategory = async (req, res) => {
   try {
     const { name } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ message: "Category Name is required" });
+    if (!name || !req.file) {
+      return res.status(400).json({ message: "Category Name and Image are required" });
     }
 
     const exists = await Category.findOne({ name });
@@ -18,7 +18,7 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ message: "Category already exists" });
     }
 
-    const category = await Category.create({ name });
+    const category = await Category.create({ name, image: `/uploads/${req.file.filename}` });
     res.status(201).json(category);
   } catch (error) {
     console.error("Create Category Error:", error);
@@ -75,15 +75,24 @@ export const updateCategory = async (req, res) => {
       return res.status(404).json({ message: "Category not found" });
     }
 
-    category.name = req.body.name || category.name;
-    const updated = await category.save();
+    category.name = req.body.name ?? category.name;
+    category.description = req.body.description ?? category.description;
 
-    res.status(200).json(updated);
+    // 🔑 CRITICAL FIX
+    if (req.file) {
+      category.image = `/uploads/${req.file.filename}`;
+    }
+    // else → keep existing image automatically
+
+    await category.save();
+
+    res.json(category);
   } catch (error) {
     console.error("Update Category Error:", error);
-    res.status(500).json({ message: "Failed to update category" });
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 /**
  * @desc    Delete a category by ID
