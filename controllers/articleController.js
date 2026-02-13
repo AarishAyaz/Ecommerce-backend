@@ -9,7 +9,7 @@ export const createArticle = async (req, res) => {
       content: body.content,
       author: body.author,
       category: body.category,
-      image: req.file ? req.file.filename : null
+      image: req.file ? `/uploads/${req.file.filename}` : null
     });
 
     res.status(201).json(article);

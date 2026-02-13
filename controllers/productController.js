@@ -1,17 +1,21 @@
 import Product from "../models/Product.js";
 
-export const createProduct = async (req,res)=>{
-    try {
-        const product = await Product.create({
-            ...req.body,
-            image: req.file.filename
-        });
-        res.status(201).json(product);
+export const createProduct = async (req, res) => {
+  try {
+    const product = await Product.create({
+      ...req.body,
+      image: req.file
+        ? `/uploads/${req.file.filename}`
+        : undefined
+    });
 
-    } catch (error) {
-        res.status(500).json({message:"Server Error"});        
-    }
-}
+    res.status(201).json(product);
+  } catch (error) {
+    console.error("Create Product Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 
 export const getProducts = async (req, res) => {
   try {
