@@ -24,9 +24,12 @@ router.get("/", protect, async (req,res)=>{
 })
 
 router.post("/", protect, async (req, res) => {
-  const cart = await Cart.findOne({ user: req.user.id }).populate("items.product");
-  if (!cart || cart.items.length === 0)
+  const cart = await Cart.findOne({ user: req.user.id })
+    .populate("items.product");
+
+  if (!cart || cart.items.length === 0) {
     return res.status(400).json({ message: "Cart is empty" });
+  }
 
   const items = cart.items.map(i => ({
     product: i.product._id,
@@ -34,19 +37,32 @@ router.post("/", protect, async (req, res) => {
     price: i.product.price
   }));
 
-  const totalAmount = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  /* ===== ORDER CALCULATIONS (BACKEND ONLY) ===== */
+  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
+  const tax = subtotal * 0.1;               // 10% tax
+  const shipping = subtotal > 100 ? 0 : 10; // free shipping over 100
+  const total = subtotal + tax + shipping;
+  /* ============================================ */
 
   const order = new Order({
     user: req.user.id,
     items,
-    totalAmount
+    subtotal,
+    tax,
+    shipping,
+    total,
+    shippingInfo: req.body.shippingInfo,
+    paymentMethod: req.body.paymentMethod,
+    status: "pending"
   });
 
   await order.save();
+
   cart.items = [];
   await cart.save();
 
   res.status(201).json(order);
 });
+
 
 export default router;

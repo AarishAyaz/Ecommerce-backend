@@ -15,6 +15,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import orderRoutes from "./routes/orderRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import adminOrdersRoutes from "./routes/adminOrdersRoutes.js";
+
 
 connectDB();
 
@@ -46,8 +48,11 @@ app.use("/api/users", userRoutes); // ✅ ADD THIS LINE
 app.use("/api/categories", categoryRoutes);
 app.use("/api/articles", articleRoutes)
 app.use("/api/stats", statsRoutes);
+
 app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/admin/orders", adminOrdersRoutes)
+
 app.get("/", (req, res) => res.send("Ecommerce API Running..."));
 
 app.listen(process.env.PORT, () =>
