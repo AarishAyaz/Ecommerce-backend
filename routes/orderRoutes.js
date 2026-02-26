@@ -9,7 +9,7 @@ router.get("/:id", protect, async (req, res) => {
   const order = await Order.findOne({
     _id: req.params.id,
     user: req.user.id
-  }).populate("items.product", "name price");
+  }).populate("items.product", "name price image");
 
   if (!order) {
     return res.status(404).json({ message: "Order not found" });
@@ -19,7 +19,7 @@ router.get("/:id", protect, async (req, res) => {
 });
 
 router.get("/", protect, async (req,res)=>{
-  const orders = await Order.find({user: req.user.id}).sort({createdAt: -1});
+  const orders = await Order.find({user: req.user.id}).populate("items.product", "name price image").sort({createdAt: -1});
   res.json(orders);
 })
 
